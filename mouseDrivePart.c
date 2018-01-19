@@ -5,6 +5,26 @@
 // #include "libusbi.h"
 
 
+static int device_status(libusb_device_handle *hd)  
+{  
+  
+    int interface = 0;  
+    unsigned char byte;  
+    libusb_control_transfer(hd, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,  
+            LIBUSB_REQUEST_CLEAR_FEATURE,  
+            0,  
+            interface,  
+            &byte, 1, 5000);  
+  
+    printf("status:0x%x\n", byte);  
+/** 
+ * byte 
+ * normal:0x18 
+ * other :0x10 
+ */  
+    return 0;  
+}  
+
 int main()
 {
     int ret;
@@ -33,7 +53,7 @@ int main()
         printf("dev total:%d\n", cnt);
 
 
-    dev_hd = libusb_open_device_with_vid_pid(ctx, 0x10c4, 0x8108);
+    dev_hd = libusb_open_device_with_vid_pid(ctx, 0x0e0f, 0x0003);
 
     if(dev_hd == NULL)
     {
@@ -97,7 +117,7 @@ int main()
   
     }
 
-
+    device_status(dev_hd);
     libusb_close(dev_hd);  
     libusb_exit(ctx); 
 
